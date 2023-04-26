@@ -173,10 +173,12 @@ module Redcarpet
       def image(link, title, alt_text)
         uri = URI.parse(link)
         filename = File.basename(uri.path, ".*")
-        allowed_params = ['scale']
+        allowed_params = ['scale', 'pos']
         option = if uri.query
                    filtered_query = URI.decode_www_form(uri.query).filter{ |x| allowed_params.include?(x.first) }
-                   !filtered_query.empty? && "[#{URI.encode_www_form(filtered_query)}]"
+                   unless filtered_query.empty?
+                    "[#{filtered_query.map { |x| x.join('=') }.join(',')}]"
+                   end
                  end
 
         if @image_table && alt_text =~ /\ATable:\s*(.*)/
